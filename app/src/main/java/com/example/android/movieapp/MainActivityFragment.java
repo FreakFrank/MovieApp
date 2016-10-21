@@ -1,22 +1,106 @@
 package com.example.android.movieapp;
 
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-
+    ImageAdapter imageAdapter = new ImageAdapter(getActivity(),new ArrayList<String>());
+    GridView movies;
     public MainActivityFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        movies= (GridView) rootView.findViewById(R.id.moviesGridView);
+        String sortMoviesBy = "top_rated.desc";
+        getMovieInfo getMovies = new getMovieInfo();
+        getMovies.execute(sortMoviesBy);
+        movies.setAdapter(imageAdapter);
+        return rootView;
+    }
+
+    public class getMovieInfo extends AsyncTask<String,Void, ArrayList<String>> {
+        public ArrayList<String> getImages(String jsonString) throws JSONException {
+            ArrayList<String> imageLinks = new ArrayList<String>();
+            JSONObject jObject = new JSONObject(jsonString);
+            JSONArray jsonArray = jObject.getJSONArray("results");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                imageLinks.add("http://image.tmdb.org/t/p/w500/"+jsonArray.getJSONObject(i).getString("poster_path"));
+            }
+            return imageLinks;
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            final String LOG_TAG = getMovieInfo.class.getSimpleName();
+            Uri movie = Uri.parse("http://api.themoviedb.org/3/movie/top_rated?").buildUpon()
+                    //.appendQueryParameter("sort_by", params[0])
+                    .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
+                    .build();
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String movieInfo = null;
+            try {
+                URL url = new URL(movie.toString());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null)
+                    return null;
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+                if (buffer == null)
+                    return null;
+                movieInfo = buffer.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                return getImages(movieInfo);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> strings) {
+            imageAdapter = new ImageAdapter(getActivity(),strings);
+            Log.d("Count is", ""+imageAdapter.getCount());
+            movies.setAdapter(imageAdapter);
+        }
     }
 }
