@@ -10,7 +10,6 @@
     android:paddingTop="0dp"
     tools:context="com.example.android.movieapp.MainActivityFragment"
     tools:showIn="@layout/activity_main">
-
     <GridView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/moviesGridView"
@@ -22,6 +21,7 @@
         android:horizontalSpacing="0dp"
         android:stretchMode="columnWidth"
         android:gravity="center"></GridView>
+
 
 
 </RelativeLayout>

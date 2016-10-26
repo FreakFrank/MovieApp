@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">Movie App</string>
     <string name="action_settings">Settings</string>
+    <string-array name="list_preference_items">
+        <item>By popularity</item>
+        <item>By Top Rated</item>
+    </string-array>
+    <string-array name="list_pref_entry_val">
+        <item>by_pop</item>
+        <item>by_top</item>
+    </string-array>
+    <string name="title_activity_movie_details">MovieDetails</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="list_title">Order By</string>
+    <string name="list_default_value">by_pop</string>
+    <string name="list_key">order_list</string>
 </resources>

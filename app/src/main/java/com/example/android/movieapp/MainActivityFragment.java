@@ -1,16 +1,24 @@
 package com.example.android.movieapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,9 +30,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,19 +44,39 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
     ImageAdapter imageAdapter = new ImageAdapter(getActivity(),new ArrayList<String>());
     GridView movies;
+    View rootView;
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
         movies= (GridView) rootView.findViewById(R.id.moviesGridView);
         String sortMoviesBy = "top_rated.desc";
         getMovieInfo getMovies = new getMovieInfo();
         getMovies.execute(sortMoviesBy);
         movies.setAdapter(imageAdapter);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("xxxxxx", "Starting new activity");
+        int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
     }
 
     public class getMovieInfo extends AsyncTask<String,Void, ArrayList<String>> {
@@ -99,7 +131,16 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             imageAdapter = new ImageAdapter(getActivity(),strings);
-            Log.d("Count is", ""+imageAdapter.getCount());
+            /*imageAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    GridView images = (GridView) rootView.findViewById(R.id.moviesGridView);
+                    String x = (String) images.getItemAtPosition(position);
+                    Intent detail = new Intent();
+                    detail.setClass(getActivity(), MovieDetails.class).putExtra(Intent.EXTRA_TEXT, x);
+                    startActivity(detail);
+                }
+            });*/
             movies.setAdapter(imageAdapter);
         }
     }
