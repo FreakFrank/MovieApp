@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
@@ -101,7 +102,6 @@ public class MainActivityFragment extends Fragment {
         protected ArrayList<String> doInBackground(String... params) {
             final String LOG_TAG = getMovieInfo.class.getSimpleName();
             Uri movie = Uri.parse("http://api.themoviedb.org/3/movie/top_rated?").buildUpon()
-                    //.appendQueryParameter("sort_by", params[0])
                     .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
                     .build();
             HttpURLConnection urlConnection = null;
@@ -124,6 +124,7 @@ public class MainActivityFragment extends Fragment {
                 if (buffer == null)
                     return null;
                 movieInfo = buffer.toString();
+                Log.d(TAG, "doInBackground :"+movieInfo);
             } catch (IOException e) {
                 e.printStackTrace();
             }
