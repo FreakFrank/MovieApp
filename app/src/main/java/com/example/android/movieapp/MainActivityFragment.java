@@ -45,6 +45,7 @@ public class MainActivityFragment extends Fragment {
     ImageAdapter imageAdapter = new ImageAdapter(getActivity(),new ArrayList<String>());
     GridView movies;
     View rootView;
+    ArrayList<String> MovieInfo = new ArrayList<String>();
     public MainActivityFragment() {
     }
 
@@ -74,7 +75,6 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("xxxxxx", "Starting new activity");
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
@@ -85,6 +85,13 @@ public class MainActivityFragment extends Fragment {
             JSONObject jObject = new JSONObject(jsonString);
             JSONArray jsonArray = jObject.getJSONArray("results");
             for (int i = 0; i < jsonArray.length(); i++) {
+                String allInfo = "";
+                allInfo += jsonArray.getJSONObject(i).getString("original_title")+ "&"
+                        +jsonArray.getJSONObject(i).getString("overview")+ "&"
+                        +jsonArray.getJSONObject(i).getString("vote_average")+"&"
+                        +jsonArray.getJSONObject(i).getString("release_date")+"&"
+                        +"http://image.tmdb.org/t/p/w500/"+jsonArray.getJSONObject(i).getString("poster_path");
+                MovieInfo.add(allInfo);
                 imageLinks.add("http://image.tmdb.org/t/p/w500/"+jsonArray.getJSONObject(i).getString("poster_path"));
             }
             return imageLinks;
@@ -142,6 +149,14 @@ public class MainActivityFragment extends Fragment {
                 }
             });*/
             movies.setAdapter(imageAdapter);
+            movies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent detail = new Intent();
+                    detail.setClass(getActivity(),MovieDetails.class).putExtra(Intent.EXTRA_TEXT,MovieInfo.get(position));
+                    startActivity(detail);
+                }
+            });
         }
     }
 }
