@@ -43,7 +43,7 @@ public class MainActivityFragment extends Fragment {
     ImageAdapter imageAdapter = new ImageAdapter(getActivity(),new ArrayList<String>());
     GridView movies;
     View rootView;
-    ArrayList<String> MovieInfo = new ArrayList<String>();
+    ArrayList<String> MovieInfo;
     private final int RESULT_SETTINGS = 0;
     public MainActivityFragment() {
     }
@@ -101,6 +101,7 @@ public class MainActivityFragment extends Fragment {
             ArrayList<String> imageLinks = new ArrayList<String>();
             JSONObject jObject = new JSONObject(jsonString);
             JSONArray jsonArray = jObject.getJSONArray("results");
+            MovieInfo = new ArrayList<String>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 String allInfo = "";
                 allInfo += jsonArray.getJSONObject(i).getString("original_title")+ "&"
