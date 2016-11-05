@@ -1,11 +1,14 @@
 package com.example.android.movieapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,13 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Spinner;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,23 +27,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * A placeholder fragment containing a simple view.
  */
+
 public class MainActivityFragment extends Fragment {
+    boolean top = true;
     ImageAdapter imageAdapter = new ImageAdapter(getActivity(),new ArrayList<String>());
     GridView movies;
     View rootView;
     ArrayList<String> MovieInfo = new ArrayList<String>();
+    private final int RESULT_SETTINGS = 0;
     public MainActivityFragment() {
     }
 
@@ -61,9 +59,10 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         movies= (GridView) rootView.findViewById(R.id.moviesGridView);
-        String sortMoviesBy = "top_rated.desc";
         getMovieInfo getMovies = new getMovieInfo();
-        getMovies.execute(sortMoviesBy);
+        SharedPreferences sort = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sorting = sort.getString("sort_list","top_rated");
+        getMovies.execute(sorting);
         movies.setAdapter(imageAdapter);
         return rootView;
     }
@@ -77,7 +76,24 @@ public class MainActivityFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if(R.id.action_settings == id){
+            Intent settings = new Intent(getActivity(),SettingsActivity.class);
+            startActivityForResult(settings,RESULT_SETTINGS);
+        }
         return super.onOptionsItemSelected(item);
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        switch(requestCode){
+            case RESULT_SETTINGS : changeSorting();
+        }
+    }
+    public void changeSorting(){
+        SharedPreferences sort = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sorting = sort.getString("sort_list","top_rated");
+        Log.d(TAG, "changeSorting: " +sorting);
+        getMovieInfo movieInfo = new getMovieInfo();
+        movieInfo.execute(sorting);
     }
 
     public class getMovieInfo extends AsyncTask<String,Void, ArrayList<String>> {
@@ -101,9 +117,19 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected ArrayList<String> doInBackground(String... params) {
             final String LOG_TAG = getMovieInfo.class.getSimpleName();
-            Uri movie = Uri.parse("http://api.themoviedb.org/3/movie/top_rated?").buildUpon()
-                    .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
-                    .build();
+            String sort = params[0];
+            Uri movie;
+            if(sort.equals("top_rated")){
+                movie = Uri.parse("http://api.themoviedb.org/3/movie/top_rated?").buildUpon()
+                        .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
+                        .build();
+            }
+            else{
+                movie = Uri.parse("http://api.themoviedb.org/3/movie/popular?").buildUpon()
+                        .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
+                        .build();
+            }
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String movieInfo = null;

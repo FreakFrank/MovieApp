@@ -23,6 +23,9 @@
         <activity
             android:name=".MovieDetails"
             android:label="@string/title_activity_movie_details" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
