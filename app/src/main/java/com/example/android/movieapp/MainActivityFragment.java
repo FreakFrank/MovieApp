@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,7 +29,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -166,16 +164,6 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
             imageAdapter = new ImageAdapter(getActivity(),strings);
-            /*imageAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    GridView images = (GridView) rootView.findViewById(R.id.moviesGridView);
-                    String x = (String) images.getItemAtPosition(position);
-                    Intent detail = new Intent();
-                    detail.setClass(getActivity(), MovieDetails.class).putExtra(Intent.EXTRA_TEXT, x);
-                    startActivity(detail);
-                }
-            });*/
             movies.setAdapter(imageAdapter);
             movies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
