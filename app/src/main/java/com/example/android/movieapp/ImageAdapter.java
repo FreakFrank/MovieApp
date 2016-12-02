@@ -26,18 +26,13 @@ public class ImageAdapter extends BaseAdapter {
 //    }
 
     public ImageAdapter(Context context, ArrayList<String> imageLinks) {
-//            super(context,imageLinks);
         this.context = context;
         imagesURL = imageLinks;
     }
 
-    public ArrayList<String> getList() {
-        return imagesURL;
-    }
-
     @Override
     public int getCount() {
-        if(imagesURL == null){
+        if (imagesURL == null) {
             return 0;
         }
         return imagesURL.size();
