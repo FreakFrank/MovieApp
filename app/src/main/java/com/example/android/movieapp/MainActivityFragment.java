@@ -26,12 +26,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+
 import static android.content.ContentValues.TAG;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static android.os.Build.VERSION_CODES.M;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -114,23 +121,39 @@ public class MainActivityFragment extends Fragment {
                 MovieInfo.add(allInfo);
                 imageLinks.add("http://image.tmdb.org/t/p/w500/" + jsonArray.getJSONObject(i).getString("poster_path"));
             }
-
             return imageLinks;
         }
-
+        public ArrayList<String> getMovieInfoFromDB(){
+            Realm realm = Realm.getDefaultInstance();
+            RealmResults<Movie> favouriteMovies = realm.where(Movie.class).findAll();
+            MovieInfo = new ArrayList<String>();
+            ArrayList<String>imageLinks = new ArrayList<>();
+            for(Movie movie:favouriteMovies){
+                Log.d(TAG, "getMovieInfoFromDB: asdasdasdasdasdasdasdasdadasdsasd");
+                Movie fav = movie;
+                MovieInfo.add(fav.getAllInfo());
+                imageLinks.add(fav.getAllInfo().split("&")[4]);
+            }
+            return imageLinks;
+        }
         @Override
         protected ArrayList<String> doInBackground(String... params) {
             final String LOG_TAG = getMovieInfo.class.getSimpleName();
             String sort = params[0];
-            Uri movie;
+            Uri movie = null;
             if (sort.equals("top_rated")) {
                 movie = Uri.parse("http://api.themoviedb.org/3/movie/top_rated?").buildUpon()
                         .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
                         .build();
-            } else {
-                movie = Uri.parse("http://api.themoviedb.org/3/movie/popular?").buildUpon()
-                        .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
-                        .build();
+            } else  {
+                if(sort.equals("most_pop")) {
+                    movie = Uri.parse("http://api.themoviedb.org/3/movie/popular?").buildUpon()
+                            .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
+                            .build();
+                }
+                else{
+                    return getMovieInfoFromDB();
+                }
             }
 
             HttpURLConnection urlConnection = null;

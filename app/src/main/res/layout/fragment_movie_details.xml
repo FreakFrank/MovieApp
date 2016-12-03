@@ -17,7 +17,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,9 +32,20 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/AddToFavourites"
+                android:text="Add to Favourites" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,8 +63,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -72,8 +82,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,8 +101,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,8 +120,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,8 +139,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -140,13 +150,13 @@
                 android:textSize="20sp" />
 
             <ListView
-                android:layout_width="wrap_content"
                 android:id="@+id/trailersListView"
-                android:headerDividersEnabled="false"
-                android:footerDividersEnabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="125dp"
                 android:divider="@android:drawable/arrow_down_float"
-                android:layout_weight="0.11"
-                android:layout_height="100dp"></ListView>
+                android:footerDividersEnabled="false"
+                android:headerDividersEnabled="false"></ListView>
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

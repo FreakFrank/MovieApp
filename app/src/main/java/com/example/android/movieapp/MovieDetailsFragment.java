@@ -1,22 +1,18 @@
 package com.example.android.movieapp;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Movie;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,7 +21,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -33,24 +28,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static android.R.attr.button;
-import static android.R.attr.logo;
-import static android.R.transition.move;
-import static android.content.ContentValues.TAG;
-import static android.os.Build.VERSION_CODES.M;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  * A placeholder fragment containing a simple view.
  */
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class MovieDetailsFragment extends Fragment {
     public MovieDetailsFragment() {
 
     }
-
     ArrayList<String> MovieDetails;
     JSONArray movieReviewsArray;
     JSONArray movieTrailersArray;
@@ -59,7 +52,7 @@ public class MovieDetailsFragment extends Fragment {
     TextView review;
     View rootView;
     ListView trailersListView;
-
+    Realm realm = Realm.getDefaultInstance();
     public void getReviewsAndTrailers(ArrayList<String> MovieDetails) {
         Uri movieTrailersUri = Uri.parse("http://api.themoviedb.org/3/movie/" + MovieDetails.get(5) + "/videos?").buildUpon()
                 .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
@@ -127,7 +120,7 @@ public class MovieDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
-        String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        final String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
         MovieDetails = new ArrayList<>(Arrays.asList(MovieInfo.split("&")));
         review = (TextView) rootView.findViewById(R.id.reviewsView);
         trailersListView = (ListView) rootView.findViewById(R.id.trailersListView);
@@ -147,6 +140,29 @@ public class MovieDetailsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        final Button favourites = (Button) rootView.findViewById(R.id.AddToFavourites);
+        final Movie searchQuery = realm.where(Movie.class).equalTo("id",MovieDetails.get(5)).findFirst();
+        if(searchQuery != null)
+            favourites.setText("Remove from Favourites");
+        favourites.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(favourites.getText().equals("Remove from Favourites")){
+                    favourites.setText("Add to Favourites");
+                    realm.beginTransaction();
+                    searchQuery.removeFromRealm();
+                    realm.commitTransaction();
+                }
+                else{
+                    favourites.setText("Remove from Favourites");
+                    realm.beginTransaction();
+                    Movie movie = realm.createObject(Movie.class);
+                    movie.setId(MovieDetails.get(5));
+                    movie.setAllInfo(MovieInfo);
+                    realm.commitTransaction();
+                }
+            }
+
+        });
         getReviewsAndTrailers(MovieDetails);
         ImageView thumb = (ImageView) rootView.findViewById(R.id.movie_thumbnail);
         Picasso.with(getActivity()).load(MovieDetails.get(4)).into(thumb);
@@ -161,11 +177,6 @@ public class MovieDetailsFragment extends Fragment {
         return rootView;
     }
 
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
     /**
      * Created by kareemismail on 12/1/16.

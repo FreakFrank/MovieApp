@@ -3,10 +3,12 @@
     <string-array name="list_preference_items">
         <item>Top Rated</item>
         <item>Most Popular</item>
+        <item>Favourites</item>
     </string-array>
     <string-array name="list_pref_entry_val">
         <item>top_rated</item>
         <item>most_pop</item>
+        <item>favourites</item>
     </string-array>
     <string name="title_activity_movie_details">MovieDetails</string>
     <string name="list_title">Order By</string>
