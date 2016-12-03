@@ -129,7 +129,6 @@ public class MainActivityFragment extends Fragment {
             MovieInfo = new ArrayList<String>();
             ArrayList<String>imageLinks = new ArrayList<>();
             for(Movie movie:favouriteMovies){
-                Log.d(TAG, "getMovieInfoFromDB: asdasdasdasdasdasdasdasdadasdsasd");
                 Movie fav = movie;
                 MovieInfo.add(fav.getAllInfo());
                 imageLinks.add(fav.getAllInfo().split("&")[4]);

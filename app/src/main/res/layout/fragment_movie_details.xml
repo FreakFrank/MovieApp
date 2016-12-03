@@ -127,14 +127,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:text="Reviews"
+                android:text="Trailers"
                 android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/reviewsView"
+            <ListView
+                android:id="@+id/trailersListView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp" />
+                android:divider="@android:drawable/arrow_down_float"
+                android:footerDividersEnabled="false"
+                android:headerDividersEnabled="false"></ListView>
 
             <View
                 android:layout_width="match_parent"
@@ -146,16 +148,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:text="Trailers"
+                android:text="Reviews"
                 android:textSize="20sp" />
 
-            <ListView
-                android:id="@+id/trailersListView"
+            <TextView
+                android:id="@+id/reviewsView"
                 android:layout_width="wrap_content"
-                android:layout_height="125dp"
-                android:divider="@android:drawable/arrow_down_float"
-                android:footerDividersEnabled="false"
-                android:headerDividersEnabled="false"></ListView>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp" />
+
+
+
+
 
         </LinearLayout>
     </ScrollView>

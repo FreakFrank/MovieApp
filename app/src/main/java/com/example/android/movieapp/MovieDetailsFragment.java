@@ -2,10 +2,13 @@ package com.example.android.movieapp;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -35,6 +40,10 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+
+import static android.R.attr.logo;
+import static android.R.attr.width;
+import static android.content.ContentValues.TAG;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -69,12 +78,20 @@ public class MovieDetailsFragment extends Fragment {
                             movieTrailersArray = new JSONObject(response.toString()).getJSONArray("results");
                             movieTrailersKeys = new ArrayList<>();
                             ArrayList<String> movieTrailersNames = new ArrayList<>();
-                            for (int i = 0; i < movieTrailersArray.length(); i++){
+                            int i = 0;
+                            for (i = 0; i < movieTrailersArray.length(); i++){
                                 movieTrailersKeys.add(movieTrailersArray.getJSONObject(i).getString("key").toString());
                                 movieTrailersNames.add(movieTrailersArray.getJSONObject(i).getString("name").toString());
                             }
+                            Display display = getActivity().getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            int width = size.x;
+                            int height = size.y;
                             trailersAdapter trailers = new trailersAdapter(getActivity(),movieTrailersNames);
                             trailersListView.setAdapter(trailers);
+                            LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-15),(int)((height/12.67)*i));
+                            trailersListView.setLayoutParams(mParam);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -94,6 +111,8 @@ public class MovieDetailsFragment extends Fragment {
                         try {
                             movieReviewsArray = new JSONObject(response.toString()).getJSONArray("results");
                             allReviews = "";
+                            if(movieReviewsArray.length() == 0)
+                                allReviews += "No Reviews for this movie !";
                             for (int i = 0; i < movieReviewsArray.length();i++){
                                 allReviews += movieReviewsArray.getJSONObject(i).getString("author").toUpperCase()+"'s Review :- " + "\n" +
                                         movieReviewsArray.getJSONObject(i).getString("content") + "\n\n";
@@ -124,7 +143,7 @@ public class MovieDetailsFragment extends Fragment {
         MovieDetails = new ArrayList<>(Arrays.asList(MovieInfo.split("&")));
         review = (TextView) rootView.findViewById(R.id.reviewsView);
         trailersListView = (ListView) rootView.findViewById(R.id.trailersListView);
-        trailersListView.setOnTouchListener(new View.OnTouchListener() {
+/*        trailersListView.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -132,7 +151,7 @@ public class MovieDetailsFragment extends Fragment {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
-        });
+        });*/
         trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
