@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import static com.example.android.movieapp.MainActivityFragment.MovieInfo;
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
-    private boolean mTwoPane;
+    public static boolean mTwoPane;
     private static final String MovieDetails_TAG = "MDTAG";
 
     @Override

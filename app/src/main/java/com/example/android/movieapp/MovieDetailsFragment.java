@@ -94,13 +94,20 @@ public class MovieDetailsFragment extends Fragment {
                             int height = size.y;
                             trailersAdapter trailers = new trailersAdapter(getActivity(),movieTrailersNames);
                             trailersListView.setAdapter(trailers);
+                            int x = 0;
+                            int y = 0;
+                            if(MainActivity.mTwoPane) {
+                                x = 500;
+                                y = i*50;
+                            }
+
                             if(movieTrailersArray.length() == 0){
-                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20),(int)((height/14)*1));
+                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20-x),(int)((height/14)*1));
                                 trailersListView.setLayoutParams(mParam);
                                 movieTrailersNames.add("No Trailers for this movie !");
                             }
                             else{
-                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20),(int)((height/12)*i));
+                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20-x),(int)(((height/12)*i)-y));
                                 trailersListView.setLayoutParams(mParam);
                             }
                         } catch (JSONException e) {
@@ -154,8 +161,9 @@ public class MovieDetailsFragment extends Fragment {
                         mUri = arguments.getParcelable(MovieDetailsFragment.DETAIL_URI);
                     }
         rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
-        final String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        if(MovieDetails == null)
+        //final String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        final String MovieInfo = IntentProto.movieInfo;
+        if(MovieInfo == null)
             return null;
 
         Log.d(TAG, "onCreateView: kammelt");
@@ -189,7 +197,8 @@ public class MovieDetailsFragment extends Fragment {
                 if(favourites.getText().equals("Remove from Favourites")){
                     favourites.setText("Add to Favourites");
                     realm.beginTransaction();
-                    searchQuery.removeFromRealm();
+                   // if(searchQuery != null)
+                        searchQuery.removeFromRealm();
                     realm.commitTransaction();
                 }
                 else{

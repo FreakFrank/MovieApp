@@ -204,6 +204,7 @@ public class MainActivityFragment extends Fragment {
             movies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    IntentProto.movieInfo = MovieInfo.get(position);
                     ((Callback) getActivity())
                             .onItemSelected(Uri.parse(MovieInfo.get(position))
                     );
