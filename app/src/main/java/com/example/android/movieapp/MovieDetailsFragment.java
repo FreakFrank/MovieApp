@@ -53,12 +53,6 @@ public class MovieDetailsFragment extends Fragment {
     private Uri mUri;
     static final String DETAIL_URI = "URI";
 
-    public interface Callback {
-               /**
-                  * DetailFragmentCallback for when an item has been selected.
-                  */
-                        public void onItemSelected(Uri dateUri);
-            }
     public MovieDetailsFragment() {
 
     }

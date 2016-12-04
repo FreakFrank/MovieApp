@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(fab != null)
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,8 +58,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onItemSelected(Uri contentUri) {
+        Log.d("CallBack", "onItemSelected: data5lt el callback");
         if (mTwoPane) {
                         // In two-pane mode, show the detail view in this activity by
                                 // adding or replacing the detail fragment using a
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                                                Bundle args = new Bundle();
                        args.putParcelable(MovieDetailsFragment.DETAIL_URI, contentUri);
 
-            MovieDetailsFragment fragment = null;
+            MovieDetailsFragment fragment = new MovieDetailsFragment();
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 fragment = new MovieDetailsFragment();
             }
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                                         .replace(R.id.movie_details_container, fragment, MovieDetails_TAG)
                                         .commit();
                     } else {
+            Log.d("Fel else ", "onItemSelected: da5alt el elseeeeeeeeeeeee " + contentUri.toString());
                     Intent detail = new Intent();
                     detail.setClass(MainActivity.this, MovieDetails.class).putExtra(Intent.EXTRA_TEXT, contentUri.toString());
                     startActivity(detail);
