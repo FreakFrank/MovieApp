@@ -74,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 fragment = new MovieDetailsFragment();
             }
             fragment.setArguments(args);
+            Log.d("Fel else ", "onItemSelected: da5alt el iffffff " + contentUri.toString());
 
-                                getFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                                         .replace(R.id.movie_details_container, fragment, MovieDetails_TAG)
                                         .commit();
                     } else {

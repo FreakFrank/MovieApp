@@ -44,6 +44,7 @@ import io.realm.RealmResults;
 import static android.R.attr.logo;
 import static android.R.attr.width;
 import static android.content.ContentValues.TAG;
+import static com.example.android.movieapp.MainActivityFragment.MovieInfo;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -154,7 +155,11 @@ public class MovieDetailsFragment extends Fragment {
                     }
         rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
         final String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        MovieDetails = new ArrayList<>(Arrays.asList(MovieInfo.split("&")));
+        if(MovieDetails == null)
+            return null;
+
+        Log.d(TAG, "onCreateView: kammelt");
+            MovieDetails = new ArrayList<>(Arrays.asList(MovieInfo.split("&")));
         review = (TextView) rootView.findViewById(R.id.reviewsView);
         trailersListView = (ListView) rootView.findViewById(R.id.trailersListView);
         /*trailersListView.setOnTouchListener(new View.OnTouchListener() {
