@@ -49,8 +49,16 @@ public class MainActivityFragment extends Fragment {
     ImageAdapter imageAdapter = new ImageAdapter(getActivity(), new ArrayList<String>());
     GridView movies;
     View rootView;
-    ArrayList<String> MovieInfo;
+    static ArrayList<String> MovieInfo;
     private final int RESULT_SETTINGS = 0;
+
+    public interface Callback {
+
+        public void onItemSelected(Uri dateUri);
+
+    }
+
+
     public MainActivityFragment() {
     }
 
@@ -103,6 +111,9 @@ public class MainActivityFragment extends Fragment {
         getMovieInfo movieInfo = new getMovieInfo();
         movieInfo.execute(sorting);
     }
+
+
+
 
     public class getMovieInfo extends AsyncTask<String, Void, ArrayList<String>> {
         public ArrayList<String> getImages(String jsonString) throws JSONException {
@@ -193,9 +204,12 @@ public class MainActivityFragment extends Fragment {
             movies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent detail = new Intent();
-                    detail.setClass(getActivity(), MovieDetails.class).putExtra(Intent.EXTRA_TEXT, MovieInfo.get(position));
-                    startActivity(detail);
+                    ((Callback) getActivity())
+                            .onItemSelected(Uri.parse(MovieInfo.get(position))
+                    );
+//                    Intent detail = new Intent();
+//                    detail.setClass(getActivity(), MovieDetails.class).putExtra(Intent.EXTRA_TEXT, MovieInfo.get(position));
+//                    startActivity(detail);
                 }
             });
         }

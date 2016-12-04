@@ -1,6 +1,12 @@
 package com.example.android.movieapp;
 
+import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +15,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import static com.example.android.movieapp.MainActivityFragment.MovieInfo;
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
+    private boolean mTwoPane;
+    private static final String MovieDetails_TAG = "MDTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,5 +36,69 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        if (findViewById(R.id.movie_details_container) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.movie_details_container, new MovieDetailsFragment(), MovieDetails_TAG)
+                            .commit();
+                }
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
+
+    @Override
+    public void onItemSelected(Uri contentUri) {
+        if (mTwoPane) {
+                        // In two-pane mode, show the detail view in this activity by
+                                // adding or replacing the detail fragment using a
+                                       // fragment transaction.
+                                               Bundle args = new Bundle();
+                       args.putParcelable(MovieDetailsFragment.DETAIL_URI, contentUri);
+
+            MovieDetailsFragment fragment = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                fragment = new MovieDetailsFragment();
+            }
+            fragment.setArguments(args);
+
+                                getFragmentManager().beginTransaction()
+                                        .replace(R.id.movie_details_container, fragment, MovieDetails_TAG)
+                                        .commit();
+                    } else {
+                    Intent detail = new Intent();
+                    detail.setClass(MainActivity.this, MovieDetails.class).putExtra(Intent.EXTRA_TEXT, contentUri.toString());
+                    startActivity(detail);
+                }
+
+    }
+//        public void onItemSelected(Uri contentUri) {
+//                if (mTwoPane) {
+//                        // In two-pane mode, show the detail view in this activity by
+//                                // adding or replacing the detail fragment using a
+//                                       // fragment transaction.
+//                                               Bundle args = new Bundle();
+//                       args.putParcelable(MovieDetailsFragment.DETAIL_URI, contentUri);
+//
+//                     MovieDetailsFragment fragment = new MovieDetailsFragment();
+//                       fragment.setArguments(args);
+//
+//                                getSupportFragmentManager().beginTransaction()
+//                                        .replace(R.id.movie_details_container, fragment, MovieDetails_TAG)
+//                                        .commit();
+//                    } else {
+//                        Intent intent = new Intent(this, MovieDetails.class)
+//                                        .setData(contentUri);
+//                        startActivity(intent);
+//                }
+//           }
 }

@@ -50,6 +50,15 @@ import static android.content.ContentValues.TAG;
  */
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MovieDetailsFragment extends Fragment {
+    private Uri mUri;
+    static final String DETAIL_URI = "URI";
+
+    public interface Callback {
+               /**
+                  * DetailFragmentCallback for when an item has been selected.
+                  */
+                        public void onItemSelected(Uri dateUri);
+            }
     public MovieDetailsFragment() {
 
     }
@@ -63,7 +72,7 @@ public class MovieDetailsFragment extends Fragment {
     ListView trailersListView;
     Realm realm = Realm.getDefaultInstance();
     public void getReviewsAndTrailers(ArrayList<String> MovieDetails) {
-        Uri movieTrailersUri = Uri.parse("http://api.themoviedb.org/3/movie/" + MovieDetails.get(5) + "/videos?").buildUpon()
+        final Uri movieTrailersUri = Uri.parse("http://api.themoviedb.org/3/movie/" + MovieDetails.get(5) + "/videos?").buildUpon()
                 .appendQueryParameter("api_key", "e9fedb645e711fbaf2d6802fab60f121")
                 .build();
         Uri movieReviewsUri = Uri.parse("http://api.themoviedb.org/3/movie/" + MovieDetails.get(5) + "/reviews?").buildUpon()
@@ -90,8 +99,15 @@ public class MovieDetailsFragment extends Fragment {
                             int height = size.y;
                             trailersAdapter trailers = new trailersAdapter(getActivity(),movieTrailersNames);
                             trailersListView.setAdapter(trailers);
-                            LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-15),(int)((height/12.67)*i));
-                            trailersListView.setLayoutParams(mParam);
+                            if(movieTrailersArray.length() == 0){
+                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20),(int)((height/14)*1));
+                                trailersListView.setLayoutParams(mParam);
+                                movieTrailersNames.add("No Trailers for this movie !");
+                            }
+                            else{
+                                LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams((width-20),(int)((height/12)*i));
+                                trailersListView.setLayoutParams(mParam);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -138,12 +154,16 @@ public class MovieDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle arguments = getArguments();
+                if (arguments != null) {
+                        mUri = arguments.getParcelable(MovieDetailsFragment.DETAIL_URI);
+                    }
         rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
         final String MovieInfo = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
         MovieDetails = new ArrayList<>(Arrays.asList(MovieInfo.split("&")));
         review = (TextView) rootView.findViewById(R.id.reviewsView);
         trailersListView = (ListView) rootView.findViewById(R.id.trailersListView);
-/*        trailersListView.setOnTouchListener(new View.OnTouchListener() {
+        /*trailersListView.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -155,6 +175,8 @@ public class MovieDetailsFragment extends Fragment {
         trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(movieTrailersKeys.size() == 0)
+                    return;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + movieTrailersKeys.get(position)));
                 startActivity(intent);
             }
